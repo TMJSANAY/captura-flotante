@@ -305,12 +305,21 @@ namespace CapturaFlotante
             fantasma.Show();
             Opacity = 0;
 
-            System.Windows.Forms.Timer seguir = new System.Windows.Forms.Timer();
-            seguir.Interval = 10;
-            seguir.Tick += delegate {
-                Point c = Cursor.Position;
-                fantasma.Location = new Point(c.X - agarre.X, c.Y - agarre.Y);
+            // Seguir al mouse en cada evento del arrastre (sin depender de un temporizador lento)
+            GiveFeedbackEventHandler alFeedback = delegate(object s, GiveFeedbackEventArgs ev) {
+                ev.UseDefaultCursors = true;
+                fantasma.SeguirCursor(agarre);
             };
+            QueryContinueDragEventHandler alContinuar = delegate(object s, QueryContinueDragEventArgs ev) {
+                fantasma.SeguirCursor(agarre);
+            };
+            GiveFeedback += alFeedback;
+            QueryContinueDrag += alContinuar;
+
+            // Respaldo por si el mouse esta quieto sobre una zona sin eventos
+            System.Windows.Forms.Timer seguir = new System.Windows.Forms.Timer();
+            seguir.Interval = 8;
+            seguir.Tick += delegate { fantasma.SeguirCursor(agarre); };
             seguir.Start();
 
             DataObject datos = new DataObject();
@@ -320,6 +329,8 @@ namespace CapturaFlotante
             try { r = DoDragDrop(datos, DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link); }
             catch { }
             seguir.Stop();
+            GiveFeedback -= alFeedback;
+            QueryContinueDrag -= alContinuar;
 
             if (r != DragDropEffects.None)
             {
@@ -360,7 +371,22 @@ namespace CapturaFlotante
     // Ventana fantasma: transparente al mouse, para que el soltar llegue a la app de abajo
     public class Fantasma : Form
     {
+        [DllImport("user32.dll")]
+        static extern bool SetWindowPos(IntPtr hWnd, IntPtr after, int x, int y, int cx, int cy, uint flags);
+        const uint SWP_NOSIZE = 0x1, SWP_NOZORDER = 0x4, SWP_NOACTIVATE = 0x10;
+
         Image img;
+        Point ultima = new Point(int.MinValue, int.MinValue);
+
+        // Mueve la ventana directo con la API de Windows (mas rapido que Location)
+        public void SeguirCursor(Point agarre)
+        {
+            Point c = Cursor.Position;
+            if (c == ultima) return;
+            ultima = c;
+            SetWindowPos(Handle, IntPtr.Zero, c.X - agarre.X, c.Y - agarre.Y, 0, 0,
+                SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+        }
 
         public Fantasma(Image img, Size tam)
         {

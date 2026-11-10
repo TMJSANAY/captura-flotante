@@ -4,6 +4,13 @@ La miniatura flotante de capturas de macOS, ahora en Windows.
 
 Cuando sacas una captura (por ejemplo con **Win + Shift + S**), aparece una miniatura en la esquina inferior derecha. La puedes **arrastrar** a cualquier chat, correo, carpeta o app, y la imagen te sigue por la pantalla mientras la mueves, igual que en la Mac.
 
+> [!IMPORTANT]
+> **Desactiva las notificaciones de la Herramienta Recortes**, o no vas a ver la miniatura: la notificación de Windows aparece en la misma esquina y la tapa.
+>
+> **Configuración → Sistema → Notificaciones → Herramienta Recortes → Desactivado**
+>
+> La captura se sigue copiando y guardando normal; solo deja de salir el aviso.
+
 ## Características
 
 - Miniatura flotante que entra deslizándose desde el borde.
@@ -24,13 +31,7 @@ Cuando sacas una captura (por ejemplo con **Win + Shift + S**), aparece una mini
 
 Windows SmartScreen puede advertir que el programa es "desconocido" porque no está firmado. Haz clic en **Más información → Ejecutar de todas formas**. El código fuente completo está en este repositorio.
 
-### Recomendado: quitar la notificación de Recortes
-
-La notificación de la Herramienta Recortes aparece en la misma esquina y tapa la miniatura. Para desactivarla:
-
-**Configuración → Sistema → Notificaciones → Herramienta Recortes → Desactivado**
-
-La captura se sigue copiando y guardando normal.
+4. **No olvides desactivar las notificaciones de la Herramienta Recortes** (ver el aviso de arriba).
 
 ## Cómo funciona
 
